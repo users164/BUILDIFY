@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUILDIFY — PC Configurator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg:#080c11;
+    --panel:#101820;
+    --panel2:#151f29;
+    --green:#83ff91;
+    --text:#f4f7fa;
+    --muted:#8795a5;
+    --border:rgba(255,255,255,.075);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    margin:0;color:var(--text);
+    background:radial-gradient(ellipse at 50% -15%,rgba(65,255,105,.13),transparent 42%),var(--bg);
+    font-family:Inter,Arial,sans-serif;min-height:100vh;
+}
+.container{max-width:1120px;margin:auto;padding:25px 22px 60px}
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 28px;border-bottom:1px solid var(--border)}
+.logo{font-size:27px;font-weight:900;letter-spacing:2px}
+.logo span{color:var(--green)}
+.nav-label{color:var(--muted);font-size:12px;letter-spacing:2px}
+.status{display:flex;align-items:center;gap:8px;font-size:12px;color:#a9fbb2;background:rgba(124,255,131,.08);border:1px solid rgba(124,255,131,.18);border-radius:30px;padding:9px 13px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero{text-align:center;padding:55px 10px 35px}
+.hero-tag{display:inline-block;color:var(--green);background:rgba(124,255,131,.08);border:1px solid rgba(124,255,131,.2);padding:8px 14px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:2px}
+.hero h1{font-size:clamp(35px,6vw,62px);line-height:1.08;letter-spacing:-2.5px;margin:20px 0 14px;font-weight:900}
+.hero h1 span{color:var(--green);text-shadow:0 0 35px rgba(124,255,131,.25)}
+.hero p{color:var(--muted);max-width:530px;margin:auto;line-height:1.7;font-size:14px}
+.main-grid{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start}
+.panel{background:linear-gradient(145deg,rgba(21,31,41,.97),rgba(13,21,29,.97));border:1px solid var(--border);border-radius:19px;padding:23px;box-shadow:0 15px 45px rgba(0,0,0,.18)}
+.panel-heading{display:flex;align-items:center;gap:12px;margin-bottom:23px}
+.heading-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:11px;background:rgba(124,255,131,.1);color:var(--green);font-size:19px}
+.panel-heading h2{font-size:17px;margin:0}
+.panel-heading p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.field{margin-bottom:19px}
+.field label{display:block;color:#b4c0cc;font-size:12px;font-weight:600;margin-bottom:9px}
+input,select{width:100%;border:1px solid #293744;background:#0b1219;color:white;border-radius:10px;padding:14px;font-size:14px;font-family:inherit;outline:none;transition:.2s}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(124,255,131,.08)}
+select option{background:#111923}
+.budget-hint{font-size:11px;color:var(--muted);margin-top:7px}
+.main-button{width:100%;border:0;border-radius:11px;padding:16px;background:linear-gradient(100deg,var(--green),#5be878);color:#07100a;font-family:inherit;font-weight:900;font-size:13px;letter-spacing:1px;cursor:pointer;box-shadow:0 7px 25px rgba(124,255,131,.16);transition:.2s}
+.main-button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,255,131,.25)}
+.error{display:none;color:#ffaaaa;background:#351b20;border:1px solid #71323c;padding:13px;border-radius:10px;font-size:12px;margin-top:15px;line-height:1.5}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.feature{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px}
+.feature strong{display:block;font-size:12px;margin-bottom:5px}
+.feature span{font-size:10px;color:var(--muted)}
+.result{display:none;animation:appear .45s ease}
+@keyframes appear{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.result-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.result-title{font-size:20px;font-weight:800}
+.result-subtitle{color:var(--muted);font-size:11px;margin-top:6px}
+.platform-tag{color:var(--green);background:rgba(124,255,131,.08);border:1px solid rgba(124,255,131,.2);padding:8px 12px;border-radius:30px;font-size:11px;font-weight:700}
+.price-card{background:radial-gradient(circle at 90% 20%,rgba(124,255,131,.13),transparent 35%),#0b1419;border:1px solid rgba(124,255,131,.2);border-radius:15px;padding:20px;margin-bottom:20px}
+.price-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.5px}
+.total{color:var(--green);font-size:34px;font-weight:900;margin:9px 0;letter-spacing:-1px}
+.price-details{color:var(--muted);font-size:11px;line-height:1.7}
+.parts-heading{font-size:13px;font-weight:700;margin:22px 0 12px}
+.part{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border);background:rgba(255,255,255,.025);border-radius:12px;margin-bottom:9px;transition:.2s}
+.part:hover{border-color:rgba(124,255,131,.3);background:rgba(124,255,131,.035);transform:translateX(3px)}
+.part-icon{width:46px;height:46px;min-width:46px;display:grid;place-items:center;border-radius:12px;background:rgba(124,255,131,.08);font-size:21px}
+.part-info{flex:1;min-width:0}
+.part-type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.part-name{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.part-price{color:var(--green);font-size:13px;font-weight:800;margin-top:6px}
+.marketplaces{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.marketplaces a{text-decoration:none;color:#a9b6c3;border:1px solid #30404e;background:#101a23;padding:6px 9px;border-radius:6px;font-size:10px;transition:.2s}
+.marketplaces a:hover{color:var(--green);border-color:var(--green)}
+.summary{padding:17px;background:rgba(124,255,131,.055);border:1px solid rgba(124,255,131,.16);border-radius:12px;font-size:12px;line-height:1.9;margin-top:18px}
+.summary strong{color:var(--green)}
+.note{font-size:10px;color:var(--muted);line-height:1.7;margin-top:16px}
+.empty-state{text-align:center;padding:65px 15px;color:var(--muted)}
+.empty-icon{font-size:43px;margin-bottom:15px}
+.empty-state strong{display:block;color:#dce5ed;font-size:14px;margin-bottom:8px}
+.empty-state p{font-size:12px;line-height:1.6}
+.fps-panel{margin-top:22px;padding:18px;background:linear-gradient(145deg,#111e19,#101820);border:1px solid rgba(124,255,131,.2);border-radius:15px}
+.fps-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.fps-header h3{font-size:16px;margin:0}
+.fps-resolution{color:var(--green);font-size:10px;border:1px solid rgba(124,255,131,.25);padding:6px 9px;border-radius:20px}
+.fps-description{color:var(--muted);font-size:11px;line-height:1.6;margin-bottom:17px}
+.fps-list{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fps-game{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:10px;padding:12px}
+.fps-game-name{font-size:11px;color:#dce5ed;font-weight:700;margin-bottom:9px}
+.fps-value{color:var(--green);font-size:22px;font-weight:900}
+.fps-unit{color:var(--muted);font-size:10px;margin-left:4px}
+.fps-settings{color:var(--muted);font-size:9px;margin-top:6px}
+.fps-warning{color:var(--muted);font-size:10px;line-height:1.6;margin-top:14px}
+footer{border-top:1px solid var(--border);margin-top:45px;padding-top:22px;display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px}
+footer span{color:var(--green)}
+@media(max-width:850px){.main-grid{grid-template-columns:1fr}}
+@media(max-width:550px){.container{padding:15px 13px 35px}.nav-label{display:none}.hero{padding:40px 5px 28px}.hero h1{letter-spacing:-1.5px}.panel{padding:17px}.total{font-size:29px}.part{gap:10px;padding:11px}.part-icon{width:39px;height:39px;min-width:39px}footer{flex-direction:column}}
+@media(max-width:450px){.fps-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="navbar">
+    <div class="logo">BUILD<span>IFY</span></div>
+    <div class="nav-label">PC CONFIGURATION SYSTEM</div>
+    <div class="status"><span class="status-dot"></span> Система готова</div>
+</header>
+
+<section class="hero">
+    <div class="hero-tag">SMART PC BUILDER</div>
+    <h1>Собери свой <span>идеальный ПК</span></h1>
+    <p>Выбери бюджет, назначение и процессорную платформу. BUILDIFY подберёт конфигурацию компьютера под твои задачи.</p>
+</section>
+
+<div class="main-grid">
+<section class="panel">
+    <div class="panel-heading">
+        <div class="heading-icon">⚙</div>
+        <div>
+            <h2>Параметры сборки</h2>
+            <p>Настрой свой будущий компьютер</p>
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="budget">ТВОЙ БЮДЖЕТ</label>
+        <input id="budget" type="number" min="15000" value="100000">
+        <div class="budget-hint">Можно превысить бюджет максимум на 5 000 ₽</div>
+    </div>
+
+    <div class="field">
+        <label for="purpose">НАЗНАЧЕНИЕ ПК</label>
+        <select id="purpose">
+            <option value="gaming">🎮 Игры</option>
+            <option value="work">💼 Работа и учёба</option>
+            <option value="creator">🎨 Монтаж и дизайн</option>
+            <option value="universal">🖥 Универсальный ПК</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="platform">ПРОИЗВОДИТЕЛЬ ПРОЦЕССОРА</label>
+        <select id="platform" onchange="updateFamilies()">
+            <option value="amd">AMD</option>
+            <option value="intel">Intel</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="family">СЕМЕЙСТВО ПРОЦЕССОРА</label>
+        <select id="family"><option value="ryzen">AMD Ryzen</option></select>
+    </div>
+
+    <button class="main-button" onclick="buildPC()">⚡ СОБРАТЬ МОЙ ПК</button>
+    <div class="error" id="error"></div>
+
+    <div class="features">
+        <div class="feature"><strong>✓ Совместимость</strong><span>Проверка сокета и памяти</span></div>
+        <div class="feature"><strong>₽ Бюджет</strong><span>Контроль стоимости сборки</span></div>
+        <div class="feature"><strong>🛒 Магазины</strong><span>Ссылки на площадки</span></div>
+        <div class="feature"><strong>⚡ FPS</strong><span>Оценка в играх</span></div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="result" id="result">
+        <div class="result-top">
+            <div>
+                <div class="result-title" id="buildTitle">Твоя сборка</div>
+                <div class="result-subtitle">Персональная конфигурация BUILDIFY</div>
+            </div>
+            <span class="platform-tag" id="platformName"></span>
+        </div>
+
+        <div class="price-card">
+            <div class="price-label">ИТОГОВАЯ СТОИМОСТЬ</div>
+            <div class="total" id="total"></div>
+            <div class="price-details" id="priceDetails"></div>
+        </div>
+
+        <div class="parts-heading">КОМПЛЕКТУЮЩИЕ</div>
+        <div id="parts"></div>
+
+        <div class="fps-panel">
+            <div class="fps-header">
+                <h3>🎮 Игровая производительность</h3>
+                <span class="fps-resolution">1080p FULL HD</span>
+            </div>
+            <div class="fps-description">Ориентировочная частота кадров в популярных играх на этой сборке.</div>
+            <div class="fps-list" id="fpsList"></div>
+            <div class="fps-warning">
+                ⚠ FPS является расчётной оценкой, а не результатом тестирования именно этой конфигурации. Реальные показатели зависят от настроек графики, драйверов, карты, сцены, памяти и обновлений игр.
+            </div>
+        </div>
+
+        <div class="summary" id="summary"></div>
+        <div class="note">
+            Цены ориентировочные и не обновляются автоматически. Перед покупкой проверь актуальные цены, характеристики, совместимость конкретных моделей, мощность блока питания и размеры комплектующих.
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🖥️</div>
+        <strong>Здесь появится твой компьютер</strong>
+        <p>Укажи параметры слева и нажми кнопку «Собрать мой ПК».</p>
+    </div>
+</section>
+</div>
+
+<footer>
+    <div>© 2026 <span>BUILDIFY</span> — PC Configurator</div>
+    <div>Создано для тех, кто любит технологии</div>
+</footer>
+</div>
+
+<script>
+const processors = [
+{name:"AMD Ryzen 3 4100",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:6500,gpu:false,level:1},
+{name:"AMD Ryzen 5 3600",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:8500,gpu:false,level:2},
+{name:"AMD Ryzen 5 5500",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:9500,gpu:false,level:2},
+{name:"AMD Ryzen 5 5600",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:11500,gpu:false,level:3},
+{name:"AMD Ryzen 5 5600G",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:12500,gpu:true,level:3},
+{name:"AMD Ryzen 7 5700X",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:16500,gpu:false,level:4},
+{name:"AMD Ryzen 7 5800X",family:"ryzen",platform:"amd",socket:"AM4",ram:"DDR4",price:19000,gpu:false,level:4},
+{name:"AMD Ryzen 5 7500F",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:16500,gpu:false,level:4},
+{name:"AMD Ryzen 5 7600",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:19500,gpu:true,level:4},
+{name:"AMD Ryzen 7 7700",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:26000,gpu:true,level:5},
+{name:"AMD Ryzen 7 7800X3D",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:39000,gpu:false,level:6},
+{name:"AMD Ryzen 9 7900X",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:37000,gpu:true,level:6},
+{name:"AMD Ryzen 9 7950X",family:"ryzen",platform:"amd",socket:"AM5",ram:"DDR5",price:52000,gpu:true,level:7},
+
+{name:"Intel Core i3-10100",family:"core",platform:"intel",socket:"LGA1200",ram:"DDR4",price:6500,gpu:true,level:1},
+{name:"Intel Core i5-10400",family:"core",platform:"intel",socket:"LGA1200",ram:"DDR4",price:9500,gpu:true,level:2},
+{name:"Intel Core i7-10700",family:"core",platform:"intel",socket:"LGA1200",ram:"DDR4",price:14500,gpu:true,level:3},
+{name:"Intel Core i3-12100",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:9500,gpu:true,level:2},
+{name:"Intel Core i5-12400F",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:12500,gpu:false,level:3},
+{name:"Intel Core i5-12400",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:14500,gpu:true,level:3},
+{name:"Intel Core i5-13400F",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:17500,gpu:false,level:4},
+{name:"Intel Core i5-14400F",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:19000,gpu:false,level:4},
+{name:"Intel Core i7-12700",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:22000,gpu:true,level:5},
+{name:"Intel Core i7-13700F",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:29000,gpu:false,level:6},
+{name:"Intel Core i9-12900K",family:"core",platform:"intel",socket:"LGA1700",ram:"DDR4",price:31000,gpu:true,level:6},
+{name:"Intel Core Ultra 5 245K",family:"core",platform:"intel",socket:"LGA1851",ram:"DDR5",price:28000,gpu:true,level:5},
+{name:"Intel Core Ultra 7 265K",family:"core",platform:"intel",socket:"LGA1851",ram:"DDR5",price:39000,gpu:true,level:6},
+{name:"Intel Core Ultra 9 285K",family:"core",platform:"intel",socket:"LGA1851",ram:"DDR5",price:65000,gpu:true,level:7},
+
+{name:"Intel Celeron G5905",family:"celeron",platform:"intel",socket:"LGA1200",ram:"DDR4",price:3500,gpu:true,level:1},
+{name:"Intel Celeron G6900",family:"celeron",platform:"intel",socket:"LGA1700",ram:"DDR4",price:4500,gpu:true,level:1},
+{name:"Intel Pentium Gold G6400",family:"pentium",platform:"intel",socket:"LGA1200",ram:"DDR4",price:4000,gpu:true,level:1},
+{name:"Intel Pentium Gold G7400",family:"pentium",platform:"intel",socket:"LGA1700",ram:"DDR4",price:5500,gpu:true,level:1},
+
+{name:"Intel Xeon E5-2670 v3",family:"xeon",platform:"intel",socket:"LGA2011-3",ram:"DDR4",price:3500,gpu:false,level:2},
+{name:"Intel Xeon E5-2680 v4",family:"xeon",platform:"intel",socket:"LGA2011-3",ram:"DDR4",price:5000,gpu:false,level:2},
+{name:"Intel Xeon E5-2690 v4",family:"xeon",platform:"intel",socket:"LGA2011-3",ram:"DDR4",price:6500,gpu:false,level:3},
+{name:"Intel Xeon E-2136",family:"xeon",platform:"intel",socket:"LGA1151",ram:"DDR4",price:10500,gpu:false,level:3}
+];
+
+const boards = {
+"AM4":{name:"B550M AM4",price:8500,ram:"DDR4"},
+"AM5":{name:"B650M AM5",price:14500,ram:"DDR5"},
+"LGA1200":{name:"H510M LGA1200",price:6500,ram:"DDR4"},
+"LGA1700":{name:"B760M LGA1700 DDR4",price:10500,ram:"DDR4"},
+"LGA1851":{name:"B860M LGA1851",price:17000,ram:"DDR5"},
+"LGA2011-3":{name:"X99 LGA2011-3",price:6500,ram:"DDR4"},
+"LGA1151":{name:"C246 LGA1151",price:10500,ram:"DDR4"}
+};
+
+const gpuOptions = [
+{name:"Встроенная графика",price:0,level:0},
+{name:"AMD Radeon RX 6400 4GB",price:12500,level:1},
+{name:"AMD Radeon RX 6600 8GB",price:19000,level:2},
+{name:"NVIDIA GeForce RTX 3050 8GB",price:21000,level:2},
+{name:"AMD Radeon RX 7600 8GB",price:27000,level:3},
+{name:"NVIDIA GeForce RTX 4060 8GB",price:30000,level:3},
+{name:"AMD Radeon RX 7700 XT 12GB",price:42000,level:4},
+{name:"NVIDIA GeForce RTX 4070 12GB",price:52000,level:5},
+{name:"NVIDIA GeForce RTX 5070 12GB",price:65000,level:6},
+{name:"NVIDIA GeForce RTX 5080 16GB",price:115000,level:7}
+];
+
+const ramOptions = [
+{name:"16 GB DDR4",price:4500,ram:"DDR4"},
+{name:"32 GB DDR4",price:8000,ram:"DDR4"},
+{name:"64 GB DDR4",price:14500,ram:"DDR4"},
+{name:"16 GB DDR5",price:6500,ram:"DDR5"},
+{name:"32 GB DDR5",price:11000,ram:"DDR5"},
+{name:"64 GB DDR5",price:19500,ram:"DDR5"}
+];
+
+function updateFamilies(){
+    const platform=document.getElementById("platform").value;
+    const family=document.getElementById("family");
+    const options=platform==="amd"
+    ?[{value:"ryzen",text:"AMD Ryzen"}]
+    :[
+        {value:"core",text:"Intel Core / Core Ultra"},
+        {value:"xeon",text:"Intel Xeon"},
+        {value:"celeron",text:"Intel Celeron"},
+        {value:"pentium",text:"Intel Pentium"}
+    ];
+    family.innerHTML="";
+    options.forEach(item=>{
+        const option=document.createElement("option");
+        option.value=item.value;
+        option.textContent=item.text;
+        family.appendChild(option);
+    });
+}
+
+function marketplaceLinks(name){
+    const q=encodeURIComponent(name);
+    return `<div class="marketplaces">
+    <a target="_blank" rel="noopener" href="https://www.ozon.ru/search/?text=${q}">Ozon ↗</a>
+    <a target="_blank" rel="noopener" href="https://www.wildberries.ru/catalog/0/search.aspx?search=${q}">Wildberries ↗</a>
+    <a target="_blank" rel="noopener" href="https://www.avito.ru/rossiya?q=${q}">Avito ↗</a>
+    </div>`;
+}
+
+function calculateFPS(build){
+    const gpu=build.gpu.level;
+    const cpu=build.cpu.level;
+
+    const games=[
+        {name:"Counter-Strike 2",icon:"🎯",base:[45,85,145,190,235,275,315,350],cpuWeight:.75,setting:"Низкие / средние"},
+        {name:"Dota 2",icon:"⚔️",base:[55,105,155,190,220,245,265,280],cpuWeight:.65,setting:"Высокие"},
+        {name:"GTA V",icon:"🚗",base:[35,75,115,145,175,205,230,250],cpuWeight:.35,setting:"Высокие"},
+        {name:"Fortnite",icon:"🎮",base:[30,65,105,135,165,195,225,250],cpuWeight:.45,setting:"Средние"},
+        {name:"PUBG",icon:"🪖",base:[30,65,105,135,165,190,215,235],cpuWeight:.45,setting:"Средние"},
+        {name:"Valorant",icon:"💥",base:[80,150,220,270,320,360,400,430],cpuWeight:.8,setting:"Высокие"},
+        {name:"Apex Legends",icon:"🚀",base:[30,65,100,130,160,190,220,245],cpuWeight:.4,setting:"Средние"},
+        {name:"Cyberpunk 2077",icon:"🌆",base:[12,25,45,65,85,110,135,165],cpuWeight:.2,setting:"Высокие, без RT"},
+        {name:"Red Dead Redemption 2",icon:"🤠",base:[18,35,60,80,105,130,155,180],cpuWeight:.2,setting:"Высокие"}
+    ];
+
+    const cpuMultiplier={1:.68,2:.78,3:.88,4:.96,5:1,6:1.06,7:1.10}[cpu]||.8;
+
+    return games.map(game=>{
+        let value;
+        if(gpu===0){
+            let integratedBase=15;
+            const name=build.cpu.name;
+            if(name.includes("5600G"))integratedBase=65;
+            else if(name.includes("7600"))integratedBase=45;
+            else if(name.includes("7700"))integratedBase=55;
+            else if(name.includes("12100"))integratedBase=35;
+            else if(name.includes("12400"))integratedBase=38;
+            else if(name.includes("G6900")||name.includes("G7400"))integratedBase=18;
+            const gameFactor=game.base[2]/155;
+            value=integratedBase*gameFactor;
+        }else{
+            const gpuBase=game.base[gpu];
+            const cpuFactor=1-game.cpuWeight+game.cpuWeight*cpuMultiplier;
+            value=gpuBase*cpuFactor;
+        }
+        value=Math.max(5,Math.round(value));
+        return {...game,low:Math.max(5,Math.round(value*.85)),high:Math.round(value*1.15),average:value};
+    });
+}
+
+function renderFPS(build){
+    const fps=calculateFPS(build);
+    document.getElementById("fpsList").innerHTML=fps.map(game=>`
+        <div class="fps-game">
+            <div class="fps-game-name">${game.icon} ${game.name}</div>
+            <div><span class="fps-value">${game.low}–${game.high}</span><span class="fps-unit">FPS</span></div>
+            <div class="fps-settings">${game.setting} · 1080p</div>
+        </div>
+    `).join("");
+}
+
+function buildPC(){
+    const budget=Number(document.getElementById("budget").value);
+    const purpose=document.getElementById("purpose").value;
+    const platform=document.getElementById("platform").value;
+    const family=document.getElementById("family").value;
+    const error=document.getElementById("error");
+    error.style.display="none";
+
+    if(!Number.isFinite(budget)||budget<15000){
+        error.textContent="Введи корректный бюджет не менее 15 000 ₽.";
+        error.style.display="block";
+        return;
+    }
+
+    const limit=budget+5000;
+    let candidates=processors.filter(p=>p.platform===platform&&p.family===family);
+
+    if(purpose==="gaming")candidates=candidates.filter(p=>p.family!=="celeron"&&p.family!=="pentium");
+    if(purpose==="creator")candidates=candidates.filter(p=>p.level>=2);
+    candidates=candidates.filter(p=>boards[p.socket]&&boards[p.socket].ram===p.ram);
+
+    const builds=[];
+
+    candidates.forEach(cpu=>{
+        const board=boards[cpu.socket];
+        const memoryChoices=ramOptions.filter(r=>r.ram===cpu.ram);
+        memoryChoices.forEach(ram=>{
+            const ssd={name:"SSD NVMe 1 TB",price:6500};
+            const caseItem={name:"Корпус с вентиляцией",price:4500};
+            const psu={name:"Блок питания 650W 80+ Bronze",price:6500};
+            const cooler={name:"Кулер для процессора",price:2500};
+
+            let gpuChoices=gpuOptions;
+            if(!cpu.gpu)gpuChoices=gpuOptions.filter(g=>g.level>0);
+            if(purpose==="gaming"||purpose==="creator")gpuChoices=gpuChoices.filter(g=>g.level>=2);
+            if(purpose==="work"&&cpu.gpu)gpuChoices=[gpuOptions[0],...gpuOptions.filter(g=>g.level<=2)];
+
+            gpuChoices.forEach(gpu=>{
+                const total=cpu.price+board.price+ram.price+ssd.price+caseItem.price+psu.price+cooler.price+gpu.price;
+                if(total<=limit)builds.push({cpu,board,ram,ssd,caseItem,psu,cooler,gpu,total});
+            });
+        });
+    });
+
+    if(!builds.length){
+        error.textContent="Не удалось найти сборку в этом бюджете. Попробуй увеличить бюджет или выбрать другое семейство процессоров.";
+        error.style.display="block";
+        return;
+    }
+
+    builds.sort((a,b)=>{
+        const aOver=a.total>=budget?0:1;
+        const bOver=b.total>=budget?0:1;
+        if(aOver!==bOver)return aOver-bOver;
+        return Math.abs(a.total-budget)-Math.abs(b.total-budget);
+    });
+
+    let build=builds[0];
+
+    if(purpose==="work"&&build.cpu.gpu&&build.gpu.level>0){
+        const alternative=builds.find(b=>b.cpu.name===build.cpu.name&&b.gpu.level===0&&Math.abs(b.total-budget)<Math.abs(build.total-budget));
+        if(alternative)build=alternative;
+    }
+
+    renderBuild(build,budget,purpose,family);
+}
+
+function renderBuild(build,budget,purpose,family){
+    const parts=[
+        {type:"Процессор",icon:"🧠",name:build.cpu.name,price:build.cpu.price},
+        {type:"Материнская плата",icon:"🖥️",name:build.board.name,price:build.board.price},
+        {type:"Оперативная память",icon:"⚡",name:build.ram.name,price:build.ram.price},
+        {type:"Видеокарта",icon:"🎮",name:build.gpu.name,price:build.gpu.price},
+        {type:"Накопитель",icon:"💾",name:build.ssd.name,price:build.ssd.price},
+        {type:"Блок питания",icon:"🔌",name:build.psu.name,price:build.psu.price},
+        {type:"Охлаждение",icon:"❄️",name:build.cooler.name,price:build.cooler.price},
+        {type:"Корпус",icon:"📦",name:build.caseItem.name,price:build.caseItem.price}
+    ];
+
+    document.getElementById("result").style.display="block";
+    document.getElementById("emptyState").style.display="none";
+    document.getElementById("buildTitle").textContent="Твоя сборка BUILDIFY";
+
+    const names={ryzen:"AMD Ryzen",core:"Intel Core",xeon:"Intel Xeon",celeron:"Intel Celeron",pentium:"Intel Pentium"};
+    document.getElementById("platformName").textContent=names[family];
+    document.getElementById("total").textContent=build.total.toLocaleString("ru-RU")+" ₽";
+
+    const difference=build.total-budget;
+    document.getElementById("priceDetails").textContent=difference>0
+        ?`Бюджет: ${budget.toLocaleString("ru-RU")} ₽ · Превышение: ${difference.toLocaleString("ru-RU")} ₽`
+        :`Бюджет: ${budget.toLocaleString("ru-RU")} ₽ · Остаток: ${Math.abs(difference).toLocaleString("ru-RU")} ₽`;
+
+    document.getElementById("parts").innerHTML=parts.map(p=>`
+        <div class="part">
+            <div class="part-icon">${p.icon}</div>
+            <div class="part-info">
+                <div class="part-type">${p.type}</div>
+                <div class="part-name">${p.name}</div>
+                <div class="part-price">${p.price.toLocaleString("ru-RU")} ₽</div>
+                ${marketplaceLinks(p.name)}
+            </div>
+        </div>
+    `).join("");
+
+    renderFPS(build);
+
+    const purposes={gaming:"Игровой компьютер",work:"Работа и учёба",creator:"Монтаж и дизайн",universal:"Универсальный компьютер"};
+
+    document.getElementById("summary").innerHTML=`
+        <strong>✓ Сборка подобрана</strong><br>
+        Назначение: ${purposes[purpose]}<br>
+        Процессор: ${build.cpu.name}<br>
+        Сокет: ${build.cpu.socket}<br>
+        Оперативная память: ${build.cpu.ram}<br>
+        Общая стоимость: ${build.total.toLocaleString("ru-RU")} ₽<br>
+        Лимит с допуском: ${(budget+5000).toLocaleString("ru-RU")} ₽
+    `;
+
+    document.getElementById("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+updateFamilies();
+</script>
+</body>
+</html>
+<div style="position:fixed;bottom:12px;left:15px;color:#83ff91;font-size:11px;opacity:.8;z-index:9999;">
+    Создал: 9deeidg
+</div>
